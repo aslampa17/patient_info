@@ -97,14 +97,18 @@ def delete_patient(pid):
     
 @patients_bp.route('/sync-data')
 def sync_data():
-    patients = db.session.execute(select(PatientInfo)).scalars().all()
-    data = "\n".join([f"{p.id}\t{p.name}\t{p.age}\t{p.gender}\t{p.email}\t{p.phone}\t{p.location}" for p in patients])
-    text_file = io.BytesIO(data.encode('utf-8'))
-    text_file.seek(0)
-    flash("Patient data synced successfully!", "success")
-    return send_file(
-        text_file,
-        mimetype='text/plain',
-        as_attachment=True,
-        download_name='patients_data.txt'
-    )
+    try:
+        patients = db.session.execute(select(PatientInfo)).scalars().all()
+        data = "\n".join([f"{p.id}\t{p.name}\t{p.age}\t{p.gender}\t{p.email}\t{p.phone}\t{p.location}" for p in patients])
+        text_file = io.BytesIO(data.encode('utf-8'))
+        text_file.seek(0)
+        flash("Patient data synced successfully!", "success")
+        return send_file(
+            text_file,
+            mimetype='text/plain',
+            as_attachment=True,
+            download_name='patients_data.txt'
+        )
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}", 'error')
+        return  redirect(url_for('patients.display_patients'))
