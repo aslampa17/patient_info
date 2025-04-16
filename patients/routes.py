@@ -101,6 +101,7 @@ def sync_data():
     data = "\n".join([f"{p.id}\t{p.name}\t{p.age}\t{p.gender}\t{p.email}\t{p.phone}\t{p.location}" for p in patients])
     text_file = io.BytesIO(data.encode('utf-8'))
     text_file.seek(0)
+    flash("Patient data synced successfully!", "success")
     return send_file(
         text_file,
         mimetype='text/plain',
