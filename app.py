@@ -14,6 +14,9 @@ app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///info.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+
 db.init_app(app)
 app.register_blueprint(patients_bp)
 
