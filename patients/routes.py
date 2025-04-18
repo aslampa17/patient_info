@@ -49,30 +49,32 @@ def new_patient():
 
 @patients_bp.route('/patients/<int:pid>/update', methods=['GET', 'POST'])
 def update_patient(pid):
-    form = PatientForm()
+    patient = db.get_or_404(PatientInfo, pid)
+    form = PatientForm(obj=patient)
     if form.validate_on_submit():
         try:
-            statement = select(PatientInfo).where(PatientInfo.id == pid)
-            patient = db.session.execute(statement).scalars().first()
-            patient.name = form.name.data
-            patient.age = form.age.data
-            patient.gender = form.gender.data
-            patient.email = form.email.data
-            patient.phone = form.phone.data
-            patient.location = form.location.data            
+            # statement = select(PatientInfo).where(PatientInfo.id == pid)
+            # patient = db.session.execute(statement).scalars().first()
+            # patient.name = form.name.data
+            # patient.age = form.age.data
+            # patient.gender = form.gender.data
+            # patient.email = form.email.data
+            # patient.phone = form.phone.data
+            # patient.location = form.location.data
+            form.populate_obj(patient)       
             db.session.commit()
             flash('Patient details updated successfully!', 'success')
             return  redirect(url_for('patients.display_patients'))
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", 'error')
-            return  redirect(url_for('patients.new_patient'))
-    try:
-        statement = select(PatientInfo).where(PatientInfo.id == pid)
-        patient = db.session.execute(statement).scalars().first()
-    except Exception as e:
-        flash(f"An error occurred: {str(e)}", 'error')
-        return  redirect(url_for('patients.display_patients'))
+            # return  redirect(url_for('patients.new_patient'))
+    # try:
+    #     statement = select(PatientInfo).where(PatientInfo.id == pid)
+    #     patient = db.session.execute(statement).scalars().first()
+    # except Exception as e:
+    #     flash(f"An error occurred: {str(e)}", 'error')
+    #     return  redirect(url_for('patients.display_patients'))
     return render_template('create_patient.html', patient=patient, form=form)
 
 @patients_bp.route('/patients/<int:pid>/delete', methods=['GET', 'POST'])
