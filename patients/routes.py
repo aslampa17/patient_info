@@ -1,5 +1,6 @@
-import io
+import csv
 from flask import render_template, request, redirect, send_file, url_for, flash
+import io
 from sqlalchemy import select
 from . import patients_bp
 from models import db, PatientInfo
@@ -53,14 +54,6 @@ def update_patient(pid):
     form = PatientForm(obj=patient)
     if form.validate_on_submit():
         try:
-            # statement = select(PatientInfo).where(PatientInfo.id == pid)
-            # patient = db.session.execute(statement).scalars().first()
-            # patient.name = form.name.data
-            # patient.age = form.age.data
-            # patient.gender = form.gender.data
-            # patient.email = form.email.data
-            # patient.phone = form.phone.data
-            # patient.location = form.location.data
             form.populate_obj(patient)       
             db.session.commit()
             flash('Patient details updated successfully!', 'success')
@@ -68,24 +61,12 @@ def update_patient(pid):
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", 'error')
-            # return  redirect(url_for('patients.new_patient'))
-    # try:
-    #     statement = select(PatientInfo).where(PatientInfo.id == pid)
-    #     patient = db.session.execute(statement).scalars().first()
-    # except Exception as e:
-    #     flash(f"An error occurred: {str(e)}", 'error')
-    #     return  redirect(url_for('patients.display_patients'))
     return render_template('create_patient.html', patient=patient, form=form)
 
 @patients_bp.route('/patients/<int:pid>/delete', methods=['GET', 'POST'])
 def delete_patient(pid):
     try:
-        statement = select(PatientInfo).where(PatientInfo.id == pid)
-        patient = db.session.execute(statement).scalars().first()
-
-        if not patient:
-            flash('Patient not found.', 'warning')
-            return redirect(url_for('patients.display_patients'))
+        patient = db.get_or_404(PatientInfo, pid)
 
         if request.method == 'POST':
             db.session.delete(patient)
@@ -103,16 +84,33 @@ def delete_patient(pid):
 def sync_data():
     try:
         patients = db.session.execute(select(PatientInfo)).scalars().all()
-        data = "\n".join([f"{p.id}\t{p.name}\t{p.age}\t{p.gender}\t{p.email}\t{p.phone}\t{p.location}" for p in patients])
-        text_file = io.BytesIO(data.encode('utf-8'))
-        text_file.seek(0)
+        # data = "\n".join([f"{p.id}\t{p.name}\t{p.age}\t{p.gender}\t{p.email}\t{p.phone}\t{p.location}" for p in patients])
+        # text_file = io.BytesIO(data.encode('utf-8'))
+        # text_file.seek(0)
+        # flash("Patient data synced successfully!", "success")
+        # return send_file(
+        #     text_file,
+        #     mimetype='text/plain',
+        #     as_attachment=True,
+        #     download_name='patients_data.txt'
+        # )
+        si = io.StringIO()
+        mem = io.BytesIO()
+        writer = csv.writer(si)
+        writer.writerow(["id", "name", "age", "gender", "email", "phone", "location"])
+        for p in patients:
+            writer.writerow([p.id, p.name, p.age, p.gender, p.email, p.phone, p.location])
+        mem.write(si.getvalue().encode('utf-8'))
+        mem.seek(0)
+        si.close()
         flash("Patient data synced successfully!", "success")
         return send_file(
-            text_file,
-            mimetype='text/plain',
+            mem,
+            mimetype='text/csv',
             as_attachment=True,
-            download_name='patients_data.txt'
+            download_name='patients_data.csv'
         )
+        
     except Exception as e:
         flash(f"An error occurred: {str(e)}", 'error')
         return  redirect(url_for('patients.display_patients'))
