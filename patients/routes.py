@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, send_file, url_for, flash
 from sqlalchemy import select
 from . import patients_bp
 from models import db, PatientInfo
+from patients.forms import PatientForm
 
 @patients_bp.route('/', methods=['GET'])
 @patients_bp.route('/patients', methods=['GET'])
@@ -24,15 +25,16 @@ def display_patient(pid):
 
 @patients_bp.route('/patients/new', methods=['GET', 'POST'])
 def new_patient():
-    if request.method == 'POST':
+    form = PatientForm()
+    if form.validate_on_submit():
         try:
             new_patient = PatientInfo(
-                    name = request.form['name'],
-                    age = int(request.form['age']),
-                    gender = request.form['gender'],
-                    email = request.form['email'],
-                    phone = request.form['phone'],
-                    location = request.form['location']            
+                    name = form.name.data,
+                    age = form.age.data,
+                    gender = form.gender.data,
+                    email = form.email.data,
+                    phone = form.phone.data,
+                    location = form.location.data                    
             )
             db.session.add(new_patient)
             db.session.commit()
@@ -43,20 +45,21 @@ def new_patient():
             flash(f"An error occurred: {str(e)}", 'error')
             return  redirect(url_for('patients.new_patient'))
 
-    return render_template('create_patient.html')
+    return render_template('create_patient.html', form=form)
 
 @patients_bp.route('/patients/<int:pid>/update', methods=['GET', 'POST'])
 def update_patient(pid):
-    if request.method == 'POST':
+    form = PatientForm()
+    if form.validate_on_submit():
         try:
             statement = select(PatientInfo).where(PatientInfo.id == pid)
             patient = db.session.execute(statement).scalars().first()
-            patient.name = request.form['name']
-            patient.age = int(request.form['age'])
-            patient.gender = request.form['gender']
-            patient.email = request.form['email']
-            patient.phone = request.form['phone']
-            patient.location = request.form['location']            
+            patient.name = form.name.data
+            patient.age = form.age.data
+            patient.gender = form.gender.data
+            patient.email = form.email.data
+            patient.phone = form.phone.data
+            patient.location = form.location.data            
             db.session.commit()
             flash('Patient details updated successfully!', 'success')
             return  redirect(url_for('patients.display_patients'))
@@ -70,8 +73,7 @@ def update_patient(pid):
     except Exception as e:
         flash(f"An error occurred: {str(e)}", 'error')
         return  redirect(url_for('patients.display_patients'))
-    print(patient)
-    return render_template('create_patient.html', patient=patient)
+    return render_template('create_patient.html', patient=patient, form=form)
 
 @patients_bp.route('/patients/<int:pid>/delete', methods=['GET', 'POST'])
 def delete_patient(pid):
