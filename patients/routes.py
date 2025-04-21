@@ -6,6 +6,7 @@ from . import patients_bp
 from models import db, PatientInfo, Visit
 from patients.forms import PatientForm, VisitForm
 
+
 @patients_bp.route('/', methods=['GET'])
 @patients_bp.route('/patients', methods=['GET'])
 def display_patients():
@@ -18,11 +19,13 @@ def display_patients():
     patients = db.session.execute(statement).scalars().all()
     return render_template('patients.html', patients=patients)
 
+
 @patients_bp.route('/patients/<int:pid>', methods=['GET'])
 def display_patient(pid):
     statement = select(PatientInfo).where(PatientInfo.id == pid)
     patients = db.session.execute(statement).scalars().all()
     return render_template('patients.html', patients=patients)
+
 
 @patients_bp.route('/patients/new', methods=['GET', 'POST'])
 def new_patient():
@@ -30,23 +33,24 @@ def new_patient():
     if form.validate_on_submit():
         try:
             new_patient = PatientInfo(
-                    name = form.name.data,
-                    age = form.age.data,
-                    gender = form.gender.data,
-                    email = form.email.data,
-                    phone = form.phone.data,
-                    location = form.location.data                    
+                name=form.name.data,
+                age=form.age.data,
+                gender=form.gender.data,
+                email=form.email.data,
+                phone=form.phone.data,
+                location=form.location.data
             )
             db.session.add(new_patient)
             db.session.commit()
             flash('Patient details added successfully!', 'success')
-            return  redirect(url_for('patients.display_patients'))
+            return redirect(url_for('patients.display_patients'))
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", 'error')
-            return  redirect(url_for('patients.new_patient'))
+            return redirect(url_for('patients.new_patient'))
 
     return render_template('create_patient.html', form=form)
+
 
 @patients_bp.route('/patients/<int:pid>/update', methods=['GET', 'POST'])
 def update_patient(pid):
@@ -54,14 +58,15 @@ def update_patient(pid):
     form = PatientForm(obj=patient)
     if form.validate_on_submit():
         try:
-            form.populate_obj(patient)       
+            form.populate_obj(patient)
             db.session.commit()
             flash('Patient details updated successfully!', 'success')
-            return  redirect(url_for('patients.display_patients'))
+            return redirect(url_for('patients.display_patients'))
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", 'error')
     return render_template('create_patient.html', patient=patient, form=form)
+
 
 @patients_bp.route('/patients/<int:pid>/delete', methods=['GET', 'POST'])
 def delete_patient(pid):
@@ -73,33 +78,26 @@ def delete_patient(pid):
             db.session.commit()
             flash(f'Patient "{patient.name}" successfully deleted.', 'success')
             return redirect(url_for('patients.display_patients'))
-        
+
         return render_template('delete_patient_confirmation.html', patient=patient)
 
     except Exception as e:
         flash(f"An error occurred: {str(e)}", 'error')
-        return  redirect(url_for('patients.display_patients'))
-    
+        return redirect(url_for('patients.display_patients'))
+
+
 @patients_bp.route('/sync-data')
 def sync_data():
     try:
         patients = db.session.execute(select(PatientInfo)).scalars().all()
-        # data = "\n".join([f"{p.id}\t{p.name}\t{p.age}\t{p.gender}\t{p.email}\t{p.phone}\t{p.location}" for p in patients])
-        # text_file = io.BytesIO(data.encode('utf-8'))
-        # text_file.seek(0)
-        # flash("Patient data synced successfully!", "success")
-        # return send_file(
-        #     text_file,
-        #     mimetype='text/plain',
-        #     as_attachment=True,
-        #     download_name='patients_data.txt'
-        # )
         si = io.StringIO()
         mem = io.BytesIO()
         writer = csv.writer(si)
-        writer.writerow(["id", "name", "age", "gender", "email", "phone", "location"])
+        writer.writerow(["id", "name", "age", "gender",
+                        "email", "phone", "location"])
         for p in patients:
-            writer.writerow([p.id, p.name, p.age, p.gender, p.email, p.phone, p.location])
+            writer.writerow([p.id, p.name, p.age, p.gender,
+                            p.email, p.phone, p.location])
         mem.write(si.getvalue().encode('utf-8'))
         mem.seek(0)
         si.close()
@@ -110,15 +108,17 @@ def sync_data():
             as_attachment=True,
             download_name='patients_data.csv'
         )
-        
+
     except Exception as e:
         flash(f"An error occurred: {str(e)}", 'error')
-        return  redirect(url_for('patients.display_patients'))
+        return redirect(url_for('patients.display_patients'))
+
 
 @patients_bp.route('/patients/<int:pid>/visits', methods=['GET'])
 def display_visits(pid):
     patient = db.get_or_404(PatientInfo, pid)
     return render_template('visits.html', patient=patient)
+
 
 @patients_bp.route('/patients/<int:pid>/visits/add', methods=['GET', 'POST'])
 def add_visit(pid):
@@ -127,20 +127,21 @@ def add_visit(pid):
     if form.validate_on_submit():
         try:
             new_visit = Visit(
-                symptoms = form.symptoms.data,
-                diagnosis = form.diagnosis.data,
-                treatment = form.treatment.data,
-                notes = form.notes.data,
-                patient = patient
+                symptoms=form.symptoms.data,
+                diagnosis=form.diagnosis.data,
+                treatment=form.treatment.data,
+                notes=form.notes.data,
+                patient=patient
             )
             db.session.add(new_visit)
             db.session.commit()
             flash('Visit added successfully!', 'success')
-            return  redirect(url_for('patients.display_visits', pid=pid))
+            return redirect(url_for('patients.display_visits', pid=pid))
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", 'error')
-    return  render_template('add_visit.html', patient=patient, form=form)
+    return render_template('add_visit.html', patient=patient, form=form)
+
 
 @patients_bp.route('/patients/<int:pid>/visits/<int:vid>/update', methods=['GET', 'POST'])
 def update_visit(pid, vid):
@@ -153,11 +154,33 @@ def update_visit(pid, vid):
     form = VisitForm(obj=visit)
     if form.validate_on_submit():
         try:
-            form.populate_obj(visit)       
+            form.populate_obj(visit)
             db.session.commit()
             flash('Patient visit details updated successfully!', 'success')
-            return  redirect(url_for('patients.display_visits', pid=pid))
+            return redirect(url_for('patients.display_visits', pid=pid))
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", 'error')
-    return render_template('add_visit.html', patient=patient,visit=visit, form=form)
+    return render_template('add_visit.html', patient=patient, visit=visit, form=form)
+
+
+@patients_bp.route('/patients/<int:pid>/visits/<int:vid>/delete', methods=['GET', 'POST'])
+def delete_visit(pid, vid):
+
+    visit = db.get_or_404(Visit, vid)
+    patient = db.get_or_404(PatientInfo, pid)
+    if visit.patient_id != patient.id:
+        flash("Visit not found for this patient.", "error")
+        return redirect(url_for('patients.display_visits', pid=pid))
+    if request.method == 'POST':
+        try:
+            db.session.delete(visit)
+            db.session.commit()
+            flash(f'Visit on {visit.visit_date.strftime("%Y-%m-%d %H:%M") if visit.visit_date else "Unknown Date"} successfully deleted.', 'success')
+            return redirect(url_for('patients.display_visits', pid=pid))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred while deleting the visit: {str(e)}", 'error')
+            return redirect(url_for('patients.display_visits', pid=pid))
+    else:
+        return render_template('delete_visit_confirmation.html', patient=patient, visit=visit)
