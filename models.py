@@ -23,9 +23,9 @@ class Visit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient_info.id'), nullable=False)
     visit_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    symptoms = db.Column(db.Text, nullable=False)
-    diagnosis = db.Column(db.Text, nullable=False)
-    treatment = db.Column(db.Text, nullable=False)
+    symptoms = db.Column(db.Text)
+    diagnosis = db.Column(db.Text)
+    treatment = db.Column(db.Text)
     notes = db.Column(db.Text)
 
     patient = db.relationship('PatientInfo', back_populates='visits')

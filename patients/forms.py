@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, SubmitField
+from wtforms import StringField, IntegerField, SelectField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length, NumberRange, Email
 
 class PatientForm(FlaskForm):
@@ -12,8 +12,8 @@ class PatientForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class VisitForm(FlaskForm):
-    symptoms = StringField('Symptoms', validators=[DataRequired()])
-    diagnosis = StringField('Diagnosis', validators=[DataRequired()])
-    treatment = StringField('Treatment', validators=[DataRequired()])
-    notes = StringField('Notes')
+    symptoms = TextAreaField('Symptoms')
+    diagnosis = TextAreaField('Diagnosis')
+    treatment = TextAreaField('Treatment')
+    notes = TextAreaField('Notes')
     submit = SubmitField('Submit')

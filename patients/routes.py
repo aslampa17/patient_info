@@ -141,3 +141,23 @@ def add_visit(pid):
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", 'error')
     return  render_template('add_visit.html', patient=patient, form=form)
+
+@patients_bp.route('/patients/<int:pid>/visits/<int:vid>/update', methods=['GET', 'POST'])
+def update_visit(pid, vid):
+    patient = db.get_or_404(PatientInfo, pid)
+    visit = db.get_or_404(Visit, vid)
+    if visit.patient_id != patient.id:
+        flash('This visit does not belong to this patient.', 'error')
+        return redirect(url_for('patients.display_visits', pid=pid))
+
+    form = VisitForm(obj=visit)
+    if form.validate_on_submit():
+        try:
+            form.populate_obj(visit)       
+            db.session.commit()
+            flash('Patient visit details updated successfully!', 'success')
+            return  redirect(url_for('patients.display_visits', pid=pid))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}", 'error')
+    return render_template('add_visit.html', patient=patient,visit=visit, form=form)
