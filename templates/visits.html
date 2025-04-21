@@ -7,12 +7,11 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Gender</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Location</th>
+                <th>Date</th>
+                <th>Symptoms</th>
+                <th>Diagnosis</th>
+                <th>Treatment</th>
+                <th>Notes</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -20,11 +19,11 @@
           {% for visit in patient.visits %}
         <tr>
           <td data-label="ID">{{ visit.id }}</td>
-          <td data-label="Name">{{ visit.visit_date }}</td>
-          <td data-label="Age">{{ visit.symptoms }}</td>
-          <td data-label="Gender">{{ visit.diagnosis }}</td>
-          <td data-label="Email">{{ visit.treatment }}</td>
-          <td data-label="Phone">{{ visit.notes }}</td>
+          <td data-label="Date">{{ visit.visit_date }}</td>
+          <td data-label="Symptoms">{{ visit.symptoms }}</td>
+          <td data-label="Diagnosis">{{ visit.diagnosis }}</td>
+          <td data-label="Treatment">{{ visit.treatment }}</td>
+          <td data-label="Notes">{{ visit.notes }}</td>
           <td data-label="Actions" class="actions-cell">
             <a
               class="action edit-icon"
@@ -97,5 +96,6 @@
       </tbody>
     </table>
   </div>
+  <a href="/patients/{{ patient.id }}/visits/add" class="button">Add New Visit</a>
 
 {% endblock %}

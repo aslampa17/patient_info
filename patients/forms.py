@@ -10,3 +10,10 @@ class PatientForm(FlaskForm):
     phone = StringField('Phone', validators=[DataRequired(), Length(min=7, max=15)])
     location = StringField('Location', validators=[DataRequired(), Length(max=100)])
     submit = SubmitField('Submit')
+
+class VisitForm(FlaskForm):
+    symptoms = StringField('Symptoms', validators=[DataRequired()])
+    diagnosis = StringField('Diagnosis', validators=[DataRequired()])
+    treatment = StringField('Treatment', validators=[DataRequired()])
+    notes = StringField('Notes')
+    submit = SubmitField('Submit')

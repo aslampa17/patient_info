@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2>Add visit for {{ patient.name }}</h2>
+<form action="{{ url_for('patients.add_visit', pid=patient.id) }}" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        <label for="symptoms">Symptoms:</label>
+        <textarea id="symptoms" name="symptoms" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="diagnosis">Diagnosis:</label>
+        <textarea id="diagnosis" name="diagnosis" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="treatment">Treatment:</label>
+        <textarea id="treatment" name="treatment" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="notes">Notes:</label>
+        <textarea id="notes" name="notes" required></textarea>
+    </div>
+    <button class="button submit-button" type="submit">Add Visit</button>
+    <div class="button-container">
+        <a href="/patients" class="button back-button">View All Patients</a>
+    </div>
+</form>
+
+
+{% endblock %}

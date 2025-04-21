@@ -4,7 +4,7 @@ import io
 from sqlalchemy import select
 from . import patients_bp
 from models import db, PatientInfo, Visit
-from patients.forms import PatientForm
+from patients.forms import PatientForm, VisitForm
 
 @patients_bp.route('/', methods=['GET'])
 @patients_bp.route('/patients', methods=['GET'])
@@ -119,3 +119,25 @@ def sync_data():
 def display_visits(pid):
     patient = db.get_or_404(PatientInfo, pid)
     return render_template('visits.html', patient=patient)
+
+@patients_bp.route('/patients/<int:pid>/visits/add', methods=['GET', 'POST'])
+def add_visit(pid):
+    patient = db.get_or_404(PatientInfo, pid)
+    form = VisitForm()
+    if form.validate_on_submit():
+        try:
+            new_visit = Visit(
+                symptoms = form.symptoms.data,
+                diagnosis = form.diagnosis.data,
+                treatment = form.treatment.data,
+                notes = form.notes.data,
+                patient = patient
+            )
+            db.session.add(new_visit)
+            db.session.commit()
+            flash('Visit added successfully!', 'success')
+            return  redirect(url_for('patients.display_visits', pid=pid))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}", 'error')
+    return  render_template('add_visit.html', patient=patient, form=form)
