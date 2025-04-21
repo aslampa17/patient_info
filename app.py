@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from patients import patients_bp
-from models import db, PatientInfo
+from models import db, PatientInfo, Visit
 from dotenv import load_dotenv
 
 
@@ -22,7 +22,10 @@ app.register_blueprint(patients_bp)
 
 @app.cli.command('init-db')
 def create_tables():
-    db.create_all()
+    with app.app_context():
+        print('Creating database tables...')
+        db.create_all()
+        print('Tables created successfully.')
 
 @app.route('/')
 def home():
