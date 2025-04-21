@@ -3,7 +3,7 @@ from flask import render_template, request, redirect, send_file, url_for, flash
 import io
 from sqlalchemy import select
 from . import patients_bp
-from models import db, PatientInfo
+from models import db, PatientInfo, Visit
 from patients.forms import PatientForm
 
 @patients_bp.route('/', methods=['GET'])
@@ -114,3 +114,8 @@ def sync_data():
     except Exception as e:
         flash(f"An error occurred: {str(e)}", 'error')
         return  redirect(url_for('patients.display_patients'))
+
+@patients_bp.route('/patients/<int:pid>/visits', methods=['GET'])
+def display_visits(pid):
+    patient = db.get_or_404(PatientInfo, pid)
+    return render_template('visits.html', patient=patient)
