@@ -1,58 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Patient Info App{% endblock %}</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
 
-<body>
-  <nav class="navbar">
-    <div class="navbar-container">
-      <a class="navbar-brand" href="/">Patient Management</a>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('patients.display_patients') }}">View Patients</a>
+    {% block head_extra %}{% endblock %}
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <div class="logo">
+          <h1>
+            <a
+              href="{{ url_for('home') }}"
+              style="color: inherit; text-decoration: none"
+              >Patient Records</a
+            >
+          </h1>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <a
+                href="{{ url_for('patients.display_patients') }}"
+                class="{{ 'active' if request.endpoint == 'patients.display_patients' else '' }}"
+                >Patients</a
+              >
+            </li>
+            <li>
+              <a
+                href="{{ url_for('patients.new_patient') }}"
+                class="{{ 'active' if request.endpoint == 'patients.new_patient' else '' }}"
+                >Add Patient</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container mt-4">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <ul class="flash-messages">
+        {% for category, message in messages %}
+
+        <li class="flash-message flash-{{ category|default('info') }}">
+          {{ message }}
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('patients.new_patient') }}">Add Patient</a>
-        </li>
+        {% endfor %}
       </ul>
-      <button class="navbar-toggler">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
+      {% endif %} {% endwith %} 
+      {% block content %} {% endblock %}
+    </main>
 
-  <div class="container">
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %}
-    <ul class="flashed-messages">
-      {% for category, message in messages %}
-      <li class="{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %} {% endwith %} {% block content %}{% endblock %}
-  </div>
-
-  <footer></footer>
-
-  <script>
-    // Optional: JavaScript for toggling mobile menu
-    const navbarToggler = document.querySelector(".navbar-toggler");
-    const navbarNav = document.querySelector(".navbar-nav");
-
-    if (navbarToggler) {
-      navbarToggler.addEventListener("click", () => {
-        navbarNav.classList.toggle("nav-active");
-        navbarToggler.classList.toggle("toggle-active");
-      });
-    }
-  </script>
-</body>
-
+    <footer></footer>
+  </body>
 </html>

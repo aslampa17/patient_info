@@ -90,23 +90,34 @@ def delete_patient(pid):
 def sync_data():
     try:
         patients = db.session.execute(select(PatientInfo)).scalars().all()
+        visits = db.session.execute(select(Visit)).scalars().all()
         si = io.StringIO()
         mem = io.BytesIO()
         writer = csv.writer(si)
-        writer.writerow(["id", "name", "age", "gender",
-                        "email", "phone", "location"])
+        writer.writerow(["Patient ID", "Name", "Age", "Gender", "Email", "Phone", "Location"])
         for p in patients:
-            writer.writerow([p.id, p.name, p.age, p.gender,
-                            p.email, p.phone, p.location])
+            writer.writerow([p.id, p.name, p.age, p.gender, p.email, p.phone, p.location])
+        writer.writerow([])
+        writer.writerow(["Visit ID", "Patient ID", "Visit Date", "Symptoms", "Diagnosis", "Treatment", "Notes"])
+        for v in visits:
+            writer.writerow([
+                v.id,
+                v.patient_id,
+                v.visit_date.strftime('%Y-%m-%d %H:%M') if v.visit_date else "N/A",
+                v.symptoms,
+                v.diagnosis,
+                v.treatment,
+                v.notes
+            ])
         mem.write(si.getvalue().encode('utf-8'))
         mem.seek(0)
         si.close()
-        flash("Patient data synced successfully!", "success")
+        flash("Patient and visit data synced successfully!", "success")
         return send_file(
             mem,
             mimetype='text/csv',
             as_attachment=True,
-            download_name='patients_data.csv'
+            download_name='patients_and_visits_data.csv'
         )
 
     except Exception as e:

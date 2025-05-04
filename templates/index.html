@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<a href="/patients/new" class="button">Add New Patient</a>
-<a href="/patients" class="button">View All Patients</a>
+<a href="{{ url_for('patients.new_patient') }}" class="btn btn-primary">Add New Patient</a>
+<a href="{{ url_for('patients.display_patients') }}" class="btn btn-primary">Add New Patient</a>
 
 {% endblock %}

@@ -1,66 +1,81 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html' %} {% block content %}
+<div class="container pt-4">
+  {% if visit %}
+  <h2 class="text-center">
+    Edit Visit for Patient: {{ patient.name }} (ID: {{ patient.id }})
+  </h2>
+  <p class="text-muted text-center">
+    Editing Visit ID: {{ visit.id }} from {{ visit.visit_date.strftime('%Y-%m-%d
+    %H:%M') if visit.visit_date else 'N/A' }}
+  </p>
+  {% else %}
+  <h2 class="text-center">
+    Add Visit for Patient: {{ patient.name }} (ID: {{ patient.id }})
+  </h2>
+  {% endif %}
 
-{% block content %}
-
-
-{% if visit %}
-<h2>Edit Visit for Patient: {{ patient.name }} (ID: {{ patient.id }})</h2>
-<p>Editing Visit ID: {{ visit.id }} from {{ visit.visit_date.strftime('%Y-%m-%d %H:%M') if visit.visit_date else 'N/A'
-    }}</p>
-{% else %}
-<h2>Add Visit for Patient: {{ patient.name }} (ID: {{ patient.id }})</h2>
-{% endif %}
-
-
-
-<form method="POST"
-    action="{{ url_for('patients.update_visit', pid=patient.id, vid=visit.id) if visit else url_for('patients.add_visit', pid=patient.id) }}">
+  <form
+    method="POST"
+    action="{{ url_for('patients.update_visit', pid=patient.id, vid=visit.id) if visit else url_for('patients.add_visit', pid=patient.id) }}"
+  >
     {{ form.hidden_tag() }}
 
-
-
     <div class="form-group">
-        {{ form.symptoms.label }}<br>
-        {{ form.symptoms(class="form-control") }}
-        {% if form.symptoms.errors %}
-        <ul class="errors">{% for error in form.symptoms.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-        {% endif %}
+      {{ form.symptoms.label }}<br />
+      {{ form.symptoms(class="form-control") }} {% if form.symptoms.errors %}
+      <ul class="text-danger">
+        {% for error in form.symptoms.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </div>
 
     <div class="form-group">
-        {{ form.diagnosis.label }}<br>
-        {{ form.diagnosis(class="form-control") }}
-        {% if form.diagnosis.errors %}
-        <ul class="errors">{% for error in form.diagnosis.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-        {% endif %}
+      {{ form.diagnosis.label }}<br />
+      {{ form.diagnosis(class="form-control") }} {% if form.diagnosis.errors %}
+      <ul class="text-danger">
+        {% for error in form.diagnosis.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </div>
 
     <div class="form-group">
-        {{ form.treatment.label }}<br>
-        {{ form.treatment(class="form-control") }}
-        {% if form.treatment.errors %}
-        <ul class="errors">{% for error in form.treatment.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-        {% endif %}
+      {{ form.treatment.label }}<br />
+      {{ form.treatment(class="form-control") }} {% if form.treatment.errors %}
+      <ul class="text-danger">
+        {% for error in form.treatment.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </div>
 
     <div class="form-group">
-        {{ form.notes.label }}<br>
-        {{ form.notes(class="form-control") }}
-        {% if form.notes.errors %}
-        <ul class="errors">{% for error in form.notes.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-        {% endif %}
+      {{ form.notes.label }}<br />
+      {{ form.notes(class="form-control") }} {% if form.notes.errors %}
+      <ul class="text-danger">
+        {% for error in form.notes.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </div>
 
     <div class="form-group">
-
-        {{ form.submit(value="Update Visit" if visit else "Add Visit", class="button") }}
+      {{ form.submit(value="Update Visit" if visit else "Add Visit", class="btn
+      btn-primary") }}
     </div>
-</form>
+    <div class="mt-4">
+      <a
+        href="{{ url_for('patients.display_visits', pid=patient.id) }}"
+        class="btn btn-secondary"
+        >Cancel and View Visits</a
+      >
+    </div>
+  </form>
 
-
-<div style="margin-top: 1em;">
-    <a href="{{ url_for('patients.display_visits', pid=patient.id) }}" class="button back-button">Cancel and View
-        Visits</a>
 </div>
-
 {% endblock %}

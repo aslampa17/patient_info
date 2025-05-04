@@ -1,6 +1,8 @@
 {% extends 'layout.html' %} {% block content %}
-<div class="form-container">
-  <h2>{% if patient %}Update Patient{% else %}Add New Patient{% endif %}</h2>
+<div class="container pt-4">
+  <h2 class="text-center">
+    {% if patient %}Update Patient{% else %}Add New Patient{% endif %}
+  </h2>
 
   <form
     action="{{ url_for('patients.update_patient', pid=patient.id) if patient else url_for('patients.new_patient') }}"
@@ -11,7 +13,7 @@
     <div class="form-group">
       {{ form.name.label }} <br />
       {{ form.name(class="form-control") }} {% if form.name.errors %}
-      <ul class="errors">
+      <ul class="text-danger">
         {% for error in form.name.errors %}
         <li>{{ error }}</li>
         {% endfor %}
@@ -22,7 +24,7 @@
     <div class="form-group">
       {{ form.age.label }} <br />
       {{ form.age(class="form-control") }} {% if form.age.errors %}
-      <ul class="errors">
+      <ul class="text-danger">
         {% for error in form.age.errors %}
         <li>{{ error }}</li>
         {% endfor %}
@@ -33,7 +35,7 @@
     <div class="form-group">
       {{ form.gender.label }} <br />
       {{ form.gender(class="form-control") }} {% if form.gender.errors %}
-      <ul class="errors">
+      <ul class="text-danger">
         {% for error in form.gender.errors %}
         <li>{{ error }}</li>
         {% endfor %}
@@ -44,7 +46,7 @@
     <div class="form-group">
       {{ form.email.label }} <br />
       {{ form.email(class="form-control") }} {% if form.email.errors %}
-      <ul class="errors">
+      <ul class="text-danger">
         {% for error in form.email.errors %}
         <li>{{ error }}</li>
         {% endfor %}
@@ -55,7 +57,7 @@
     <div class="form-group">
       {{ form.phone.label }} <br />
       {{ form.phone(class="form-control") }} {% if form.phone.errors %}
-      <ul class="errors">
+      <ul class="text-danger">
         {% for error in form.phone.errors %}
         <li>{{ error }}</li>
         {% endfor %}
@@ -66,7 +68,7 @@
     <div class="form-group">
       {{ form.location.label }} <br />
       {{ form.location(class="form-control") }} {% if form.location.errors %}
-      <ul class="errors">
+      <ul class="text-danger">
         {% for error in form.location.errors %}
         <li>{{ error }}</li>
         {% endfor %}
@@ -74,13 +76,13 @@
       {% endif %}
     </div>
 
-    {{ form.submit(class="button submit-button", value="Update Patient" if
-    patient else "Create Patient") }}
+    {{ form.submit(class="btn btn-primary", value="Update Patient" if patient
+    else "Create Patient") }}
 
-    <div class="button-container" style="margin-top: 1em">
+    <div class="mt-4">
       <a
         href="{{ url_for('patients.display_patients') }}"
-        class="button back-button"
+        class="btn btn-secondary"
         >Cancel</a
       >
     </div>
