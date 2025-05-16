@@ -18,6 +18,7 @@ def display_patients():
         filters = [PatientInfo.phone.ilike(f"%{term}%") for term in terms]
         statement = statement.where(or_(*filters))
 
+    statement = statement.order_by(PatientInfo.created_at.desc())
     patients = db.session.execute(statement).scalars().all()
     return render_template('patients.html', patients=patients)
 
