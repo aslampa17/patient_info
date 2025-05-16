@@ -1,7 +1,7 @@
 import csv
 from flask import render_template, request, redirect, send_file, url_for, flash
 import io
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from . import patients_bp
 from models import db, PatientInfo, Visit
 from patients.forms import PatientForm, VisitForm
@@ -14,7 +14,9 @@ def display_patients():
     statement = select(PatientInfo)
 
     if search_term:
-        statement = statement.where(PatientInfo.phone.like(f"%{search_term}%"))
+        terms = [term.strip() for term in search_term.split(',') if term.strip()]
+        filters = [PatientInfo.phone.ilike(f"%{term}%") for term in terms]
+        statement = statement.where(or_(*filters))
 
     patients = db.session.execute(statement).scalars().all()
     return render_template('patients.html', patients=patients)
