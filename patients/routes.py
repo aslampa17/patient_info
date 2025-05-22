@@ -1,7 +1,7 @@
 import csv
 from flask import jsonify, render_template, request, redirect, send_file, url_for, flash
 import io
-from sqlalchemy import func, or_, select
+from sqlalchemy import distinct, func, or_, select
 from . import patients_bp
 from models import db, PatientInfo, Visit
 from patients.forms import PatientForm, VisitForm
@@ -242,3 +242,17 @@ def diagnosis_search():
     statement = statement.order_by(Visit.visit_date.desc())
     visits = db.session.execute(statement).scalars().all()
     return render_template('diagnosis_search.html', visits=visits)
+
+@patients_bp.route('/diagnosis_search/autocomplete', methods=['GET'])
+def autocomplete_diagnosis():
+    term = request.args.get('term', '').strip()
+
+    if not term:
+        return jsonify([])
+
+    query = select(distinct(Visit.diagnosis)).where(
+        Visit.diagnosis.ilike(f'%{term}%')
+    ).limit(10)
+
+    results = db.session.execute(query).scalars().all()
+    return jsonify(results)
