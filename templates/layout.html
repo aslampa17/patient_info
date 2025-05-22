@@ -41,6 +41,13 @@
                 >Add Patient</a
               >
             </li>
+            <li>
+              <a
+                href="{{ url_for('patients.diagnosis_search') }}"
+                class="{{ 'active' if request.endpoint == 'patients.diagnosis_search' else '' }}"
+                >Search Diagnosis</a
+              >
+            </li>
           </ul>
         </nav>
       </div>

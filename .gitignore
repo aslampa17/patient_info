@@ -6,3 +6,4 @@ dist
 run.spec
 info.db
 .env.bak
+.vscode

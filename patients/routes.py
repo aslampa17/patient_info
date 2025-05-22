@@ -1,7 +1,7 @@
 import csv
-from flask import render_template, request, redirect, send_file, url_for, flash
+from flask import jsonify, render_template, request, redirect, send_file, url_for, flash
 import io
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from . import patients_bp
 from models import db, PatientInfo, Visit
 from patients.forms import PatientForm, VisitForm
@@ -21,6 +21,24 @@ def display_patients():
     statement = statement.order_by(PatientInfo.created_at.desc())
     patients = db.session.execute(statement).scalars().all()
     return render_template('patients.html', patients=patients)
+
+@patients_bp.route('/patients/autocomplete', methods=['GET'])
+def autocomplete_patients():
+    term = request.args.get('term', '').strip()
+
+    if not term:
+        return jsonify([])
+
+    query = select(PatientInfo.phone).where(
+        or_(
+            PatientInfo.name.ilike(f'%{term}%'),
+            PatientInfo.phone.ilike(f'%{term}%')
+        )
+    ).limit(10)
+
+    results = db.session.execute(query).scalars().all()
+    return jsonify(results)
+
 
 
 @patients_bp.route('/patients/<int:pid>', methods=['GET'])
@@ -198,3 +216,29 @@ def delete_visit(pid, vid):
             return redirect(url_for('patients.display_visits', pid=pid))
     else:
         return render_template('delete_visit_confirmation.html', patient=patient, visit=visit)
+
+@patients_bp.route('/diagnosis_search', methods=['GET','POST'])
+def diagnosis_search():
+    search_term = request.args.get('search')
+    statement = select(Visit)
+
+    if search_term:
+        terms = [term.replace(' ', '').strip() for term in search_term.split(',') if term.strip()]
+        filters = []
+
+        # Remove spaces from diagnosis field for comparison
+        clean_diag = func.replace(Visit.diagnosis, ' ', '')
+
+        for term in terms:
+            filters.append(or_(
+                clean_diag == term,
+                clean_diag.like(f'{term},%'),
+                clean_diag.like(f'%,{term}'),
+                clean_diag.like(f'%,{term},%')
+            ))
+
+        statement = statement.where(or_(*filters))
+
+    statement = statement.order_by(Visit.visit_date.desc())
+    visits = db.session.execute(statement).scalars().all()
+    return render_template('diagnosis_search.html', visits=visits)

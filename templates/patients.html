@@ -1,16 +1,18 @@
-{% extends 'layout.html' %} {% block content %}
+{% extends 'layout.html' %}
+{% block head_extra %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+{% endblock %}
+{% block content %}
 
 <div class="container pt-4">
   <h2 class="text-center">Patient List</h2>
   <div class="search-container pb-3">
     <form method="GET" action="{{ url_for('patients.display_patients') }}">
-      <input
-        type="text"
-        name="search"
-        placeholder="Search by Phone"
-        value="{{ request.args.get('search', '') }}"
-        class="form-control"
-      />
+      <input type="text" id="patient-search" name="search" placeholder="Search by Phone" value="{{ request.args.get('search', '') }}"
+        class="form-control" />
       <button type="submit" class="btn btn-primary mt-2">Search</button>
     </form>
   </div>
@@ -39,24 +41,9 @@
           <td data-label="Phone">{{ patient.phone }}</td>
           <td data-label="Location">{{ patient.location }}</td>
           <td data-label="Actions" class="actions-cell">
-            <a
-              class="btn btn-primary"
-              href="/patients/{{ patient.id }}/visits"
-              title="View"
-              >View</a
-            >
-            <a
-              class="btn btn-secondary"
-              href="/patients/{{ patient.id }}/update"
-              title="Edit"
-              >Edit</a
-            >
-            <a
-              class="btn btn-danger"
-              href="/patients/{{ patient.id }}/delete"
-              title="Delete"
-              >Delete</a
-            >
+            <a class="btn btn-primary" href="/patients/{{ patient.id }}/visits" title="View">View</a>
+            <a class="btn btn-secondary" href="/patients/{{ patient.id }}/update" title="Edit">Edit</a>
+            <a class="btn btn-danger" href="/patients/{{ patient.id }}/delete" title="Delete">Delete</a>
           </td>
         </tr>
         {% endfor %}
@@ -65,11 +52,25 @@
   </div>
 
   <div class="mt-4">
-    <a href="{{ url_for('patients.new_patient') }}" class="btn btn-primary"
-      >Add New Patient</a
-    >
-   
+    <a href="{{ url_for('patients.new_patient') }}" class="btn btn-primary">Add New Patient</a>
+
   </div>
 </div>
-
+<script>
+   $(function() {
+    $("#patient-search").autocomplete({
+      source: function(request, response) {
+        $.ajax({
+          url: "{{ url_for('patients.autocomplete_patients') }}",
+          dataType: "json",
+          data: { term: request.term },
+          success: function(data) {
+            response(data);
+          }
+        });
+      },
+      minLength: 2
+    });
+  });
+</script>
 {% endblock %}
