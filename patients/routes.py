@@ -1,6 +1,4 @@
-import csv
 from flask import jsonify, render_template, request, redirect, send_file, url_for, flash
-import io
 from sqlalchemy import distinct, func, or_, select
 from . import patients_bp
 from models import db, PatientInfo, Visit
@@ -105,46 +103,6 @@ def delete_patient(pid):
     except Exception as e:
         flash(f"An error occurred: {str(e)}", 'error')
         return redirect(url_for('patients.display_patients'))
-
-
-@patients_bp.route('/sync-data')
-def sync_data():
-    try:
-        patients = db.session.execute(select(PatientInfo)).scalars().all()
-        visits = db.session.execute(select(Visit)).scalars().all()
-        si = io.StringIO()
-        mem = io.BytesIO()
-        writer = csv.writer(si)
-        writer.writerow(["Patient ID", "Name", "Age", "Gender", "Email", "Phone", "Location"])
-        for p in patients:
-            writer.writerow([p.id, p.name, p.age, p.gender, p.email, p.phone, p.location])
-        writer.writerow([])
-        writer.writerow(["Visit ID", "Patient ID", "Visit Date", "Symptoms", "Diagnosis", "Treatment", "Notes"])
-        for v in visits:
-            writer.writerow([
-                v.id,
-                v.patient_id,
-                v.visit_date.strftime('%Y-%m-%d %H:%M') if v.visit_date else "N/A",
-                v.symptoms,
-                v.diagnosis,
-                v.treatment,
-                v.notes
-            ])
-        mem.write(si.getvalue().encode('utf-8'))
-        mem.seek(0)
-        si.close()
-        flash("Patient and visit data synced successfully!", "success")
-        return send_file(
-            mem,
-            mimetype='text/csv',
-            as_attachment=True,
-            download_name='patients_and_visits_data.csv'
-        )
-
-    except Exception as e:
-        flash(f"An error occurred: {str(e)}", 'error')
-        return redirect(url_for('patients.display_patients'))
-
 
 @patients_bp.route('/patients/<int:pid>/visits', methods=['GET'])
 def display_visits(pid):
