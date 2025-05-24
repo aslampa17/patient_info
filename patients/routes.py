@@ -213,4 +213,13 @@ def autocomplete_diagnosis():
     ).limit(10)
 
     results = db.session.execute(query).scalars().all()
-    return jsonify(results)
+    temp = []
+    for result in results:
+        if ',' in result:
+            result = result.split(',')
+            for item in result:
+                if term in item:
+                    temp.append(item.strip())
+        else:
+            temp.append(result)
+    return jsonify(temp)

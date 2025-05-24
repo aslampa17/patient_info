@@ -1,4 +1,11 @@
-{% extends 'layout.html' %} {% block content %}
+{% extends 'layout.html' %} 
+{% block head_extra %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+{% endblock %}
+{% block content %}
 <div class="container pt-4">
   {% if visit %}
   <h2 class="text-center">
@@ -14,10 +21,8 @@
   </h2>
   {% endif %}
 
-  <form
-    method="POST"
-    action="{{ url_for('patients.update_visit', pid=patient.id, vid=visit.id) if visit else url_for('patients.add_visit', pid=patient.id) }}"
-  >
+  <form method="POST"
+    action="{{ url_for('patients.update_visit', pid=patient.id, vid=visit.id) if visit else url_for('patients.add_visit', pid=patient.id) }}">
     {{ form.hidden_tag() }}
 
     <div class="form-group">
@@ -33,7 +38,7 @@
 
     <div class="form-group">
       {{ form.diagnosis.label }}<br />
-      {{ form.diagnosis(class="form-control") }} {% if form.diagnosis.errors %}
+      {{ form.diagnosis(class="form-control", id="diagnosis-input") }} {% if form.diagnosis.errors %}
       <ul class="text-danger">
         {% for error in form.diagnosis.errors %}
         <li>{{ error }}</li>
@@ -69,13 +74,27 @@
       btn-primary") }}
     </div>
     <div class="mt-4">
-      <a
-        href="{{ url_for('patients.display_visits', pid=patient.id) }}"
-        class="btn btn-secondary"
-        >Cancel and View Visits</a
-      >
+      <a href="{{ url_for('patients.display_visits', pid=patient.id) }}" class="btn btn-secondary">Cancel and View
+        Visits</a>
     </div>
   </form>
 
 </div>
+<script>
+  $(function () {
+    $("#diagnosis-input").autocomplete({
+      source: function (request, response) {
+        $.ajax({
+          url: "{{ url_for('patients.autocomplete_diagnosis') }}",
+          dataType: "json",
+          data: { term: request.term },
+          success: function (data) {
+            response(data);
+          }
+        });
+      },
+      minLength: 2
+    });
+  });
+</script>
 {% endblock %}
