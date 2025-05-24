@@ -209,6 +209,7 @@ def autocomplete_diagnosis():
         return jsonify([])
 
     query = select(distinct(Visit.diagnosis)).where(
+        Visit.diagnosis.isnot(None),
         Visit.diagnosis.ilike(f'%{term}%')
     ).limit(10)
 
@@ -218,8 +219,9 @@ def autocomplete_diagnosis():
         if ',' in result:
             result = result.split(',')
             for item in result:
-                if term in item:
-                    temp.append(item.strip())
+                item = item.strip()
+                if term.lower() in item.lower():
+                    temp.append(item)
         else:
             temp.append(result)
     return jsonify(temp)
