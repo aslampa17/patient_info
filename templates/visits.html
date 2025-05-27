@@ -7,6 +7,8 @@
     <p class="text-center">Patient Phone: {{ patient.phone }}</p>
   </div>
 
+  <a href="/patients/{{ patient.id }}/visits/add" class="btn btn-primary mt-4">Add New Visit</a>
+
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>
@@ -31,8 +33,10 @@
           <td data-label="Treatment">{{ visit.treatment }}</td>
           <td data-label="Notes">{{ visit.notes }}</td>
           <td data-label="Actions" class="actions-cell">
-            <a class="btn btn-primary" href="/patients/{{ visit.patient_id }}/visits/{{ visit.id }}/update" title="Edit">Edit</a>
-            <a class="btn btn-danger" href="/patients/{{ patient.id }}/visits/{{ visit.id }}/delete" title="Delete">Delete</a>
+            <a class="btn btn-primary" href="/patients/{{ visit.patient_id }}/visits/{{ visit.id }}/update"
+              title="Edit">Edit</a>
+            <a class="btn btn-danger" href="/patients/{{ patient.id }}/visits/{{ visit.id }}/delete"
+              title="Delete">Delete</a>
           </td>
         </tr>
         {% endfor %}
@@ -47,6 +51,5 @@
     </table>
   </div>
 </div>
-<a href="/patients/{{ patient.id }}/visits/add" class="btn btn-primary mt-4">Add New Visit</a>
 
 {% endblock %}

@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['run.py'],
+    ['app.py'],
     pathex=[],
     binaries=[],
     datas=[('templates', 'templates'), ('static', 'static')],
@@ -35,5 +35,4 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['res/icon.png'],
 )

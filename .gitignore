@@ -3,7 +3,8 @@ __pycache__
 instance
 build
 dist
-run.spec
 info.db
-.env.bak
 .vscode
+*.spec
+*.service
+*.sh
