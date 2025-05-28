@@ -8,3 +8,4 @@ info.db
 *.spec
 *.service
 *.sh
+run.py
