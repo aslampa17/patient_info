@@ -24,14 +24,14 @@
       </thead>
       {% if patient.visits %}
       <tbody>
-        {% for visit in patient.visits %}
+        {% for visit in visits %}
         <tr>
           <td data-label="ID">{{ visit.id }}</td>
           <td data-label="Date">{{ visit.visit_date.strftime('%Y-%m-%d %H:%M') }}</td>
-          <td data-label="Symptoms">{{ visit.symptoms }}</td>
-          <td data-label="Diagnosis">{{ visit.diagnosis }}</td>
-          <td data-label="Treatment">{{ visit.treatment }}</td>
-          <td data-label="Notes">{{ visit.notes }}</td>
+          <td style="white-space: pre-wrap;" data-label="Symptoms">{{ visit.symptoms }}</td>
+          <td style="white-space: pre-wrap;" data-label="Diagnosis">{{ visit.diagnosis }}</td>
+          <td style="white-space: pre-wrap;" data-label="Treatment">{{ visit.treatment }}</td>
+          <td style="white-space: pre-wrap;" data-label="Notes">{{ visit.notes }}</td>
           <td data-label="Actions" class="actions-cell">
             <a class="btn btn-primary" href="/patients/{{ visit.patient_id }}/visits/{{ visit.id }}/update"
               title="Edit">Edit</a>
@@ -50,6 +50,18 @@
       {% endif %}
     </table>
   </div>
+  <div class="pagination">
+    {% if pagination.has_prev %}
+    <a href="{{ url_for('patients.display_visits', pid=patient.id, page=pagination.prev_num) }}">&laquo; Prev</a>
+    {% endif %}
+
+    Page {{ pagination.page }} of {{ pagination.pages }}
+
+    {% if pagination.has_next %}
+    <a href="{{ url_for('patients.display_visits', pid=patient.id, page=pagination.next_num) }}">Next &raquo;</a>
+    {% endif %}
+  </div>
+
 </div>
 
 {% endblock %}

@@ -1,3 +1,4 @@
+import re
 from flask import jsonify, render_template, request, redirect, send_file, url_for, flash
 from sqlalchemy import distinct, func, or_, select
 from . import patients_bp
@@ -9,16 +10,24 @@ from patients.forms import PatientForm, VisitForm
 @patients_bp.route('/patients', methods=['GET'])
 def display_patients():
     search_term = request.args.get('search')
+
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+
     statement = select(PatientInfo)
 
     if search_term:
         terms = [term.strip() for term in search_term.split(',') if term.strip()]
+        # terms = [term.strip() for term in re.split(r'[,\n]+', search_term) if term.strip()]
         filters = [PatientInfo.phone.ilike(f"%{term}%") for term in terms]
         statement = statement.where(or_(*filters))
 
     statement = statement.order_by(PatientInfo.created_at.desc())
-    patients = db.session.execute(statement).scalars().all()
-    return render_template('patients.html', patients=patients)
+
+    pagination = db.paginate(statement, page=page, per_page=per_page)
+
+    patients = pagination.items
+    return render_template('patients.html', patients=patients, pagination=pagination, search_term=search_term)
 
 @patients_bp.route('/patients/autocomplete', methods=['GET'])
 def autocomplete_patients():
@@ -107,7 +116,16 @@ def delete_patient(pid):
 @patients_bp.route('/patients/<int:pid>/visits', methods=['GET'])
 def display_visits(pid):
     patient = db.get_or_404(PatientInfo, pid)
-    return render_template('visits.html', patient=patient)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+
+    statement = select(Visit).where(Visit.patient_id == pid).order_by(Visit.visit_date.desc())
+    pagination = db.paginate(statement, page=page, per_page=per_page)
+    visits = pagination.items
+
+    return render_template('visits.html', patient=patient, visits=visits, pagination=pagination)
+
 
 
 @patients_bp.route('/patients/<int:pid>/visits/add', methods=['GET', 'POST'])
@@ -178,10 +196,15 @@ def delete_visit(pid, vid):
 @patients_bp.route('/diagnosis_search', methods=['GET','POST'])
 def diagnosis_search():
     search_term = request.args.get('search')
+
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+
     statement = select(Visit)
 
     if search_term:
         terms = [term.replace(' ', '').strip() for term in search_term.split(',') if term.strip()]
+        # terms = [term.replace(' ', '').strip() for term in re.split(r'[,\n]+', search_term) if term.strip()]
         filters = []
 
         # Remove spaces from diagnosis field for comparison
@@ -198,8 +221,11 @@ def diagnosis_search():
         statement = statement.where(or_(*filters))
 
     statement = statement.order_by(Visit.visit_date.desc())
-    visits = db.session.execute(statement).scalars().all()
-    return render_template('diagnosis_search.html', visits=visits)
+
+    pagination = db.paginate(statement, page=page, per_page=per_page)
+    # visits = db.session.execute(statement).scalars().all()
+    visits = pagination.items
+    return render_template('diagnosis_search.html', visits=visits, pagination=pagination, search_term=search_term)
 
 @patients_bp.route('/diagnosis_search/autocomplete', methods=['GET'])
 def autocomplete_diagnosis():
