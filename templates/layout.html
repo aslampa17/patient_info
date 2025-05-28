@@ -5,46 +5,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Patient Info App{% endblock %}</title>
-
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
 
   {% block head_extra %}{% endblock %}
 </head>
 
-<body>
-  <header>
-    <div class="container">
-      <div class="logo">
-        <h1>
-          <a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none">Patient Records</a>
-        </h1>
-      </div>
-      <nav>
-        <ul>
-          <li>
-            <a href="{{ url_for('patients.display_patients') }}"
-              class="{{ 'active' if request.endpoint == 'patients.display_patients' else '' }}">Patients</a>
-          </li>
-          <li>
-            <a href="{{ url_for('patients.new_patient') }}"
-              class="{{ 'active' if request.endpoint == 'patients.new_patient' else '' }}">Add Patient</a>
-          </li>
-          <li>
-            <a href="{{ url_for('patients.diagnosis_search') }}"
-              class="{{ 'active' if request.endpoint == 'patients.diagnosis_search' else '' }}">Search Diagnosis</a>
-          </li>
-          <li>
-            <form id="shutdown-form" action="{{ url_for('shutdown') }}" method="POST" style="display:inline;background:#dc3545;">
-              <button class="btn btn-danger" type="submit"
-                style="background:#dc3545; border:none; padding:0; cursor:pointer; color:white; font:inherit;">
-                Exit
-              </button>
-            </form>
-          </li>
-        </ul>
-      </nav>
+
+
+
+
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg bg-primary navbar-dark" data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('home') }}">
+        Patient Info
+      </a>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('patients.display_patients') }}">Patients</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('patients.new_patient') }}">Add New Patient</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('patients.diagnosis_search') }}">Search Diagnosis</a>
+        </li>
+        <li class="nav-item">
+          <form id="shutdown-form" action="{{ url_for('shutdown') }}" method="POST" class="d-inline p-4">
+            <button class="btn btn-danger btn-sm" type="submit">Exit</button>
+          </form>
+
+        </li>
+      </ul>
     </div>
-  </header>
+  </nav>
 
   <main class="container mt-4">
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -62,13 +59,15 @@
   </main>
 
   <footer></footer>
-<script>
-  document.getElementById('shutdown-form').addEventListener('submit', function(e) {
-    if(!confirm('Are you sure you want to exit?')) {
-      e.preventDefault();
-    }
-  });
-</script>
+  <script>
+    document.getElementById('shutdown-form').addEventListener('submit', function (e) {
+      if (!confirm('Are you sure you want to exit?')) {
+        e.preventDefault();
+      }
+    });
+  </script>
+  <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </body>
 
 </html>
