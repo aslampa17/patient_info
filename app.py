@@ -49,10 +49,13 @@ def home():
 def shutdown():
     if request.method != "POST":
         abort(405)
-    import os, signal
 
-    os.kill(os.getpid(), signal.SIGTERM)
-    return "Shutting down", 200
+    def delayed_shutdown():
+        time.sleep(0.1)
+        os.kill(os.getpid(), signal.SIGTERM)
+
+    threading.Thread(target=delayed_shutdown).start()
+    return "Shutting down.....", 200
 
 
 def initialize_database():
