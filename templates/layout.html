@@ -6,16 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Patient Info App{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-
+  <style>
+    .flash-message {
+      margin-bottom: 1rem;
+    }
+  </style>
   {% block head_extra %}{% endblock %}
 </head>
 
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
   <nav class="navbar navbar-expand-lg bg-primary navbar-dark" data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{{ url_for('home') }}">
-        <img src="{{ url_for('static', filename='icon.svg')}}" alt="Logo" width="30" height="24"
-          class="d-inline-block align-text-top">
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='icon.svg') }}" alt="Logo" width="30" height="24" class="me-2">
         Patient Info
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -25,20 +28,20 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+            <a class="nav-link {% if request.endpoint == 'patients.display_patients' %}active{% endif %}"
+              href="{{ url_for('patients.display_patients') }}">Patients</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('patients.display_patients') }}">Patients</a>
+            <a class="nav-link {% if request.endpoint == 'patients.new_patient' %}active{% endif %}"
+              href="{{ url_for('patients.new_patient') }}">Add New Patient</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('patients.new_patient') }}">Add New Patient</a>
+            <a class="nav-link {% if request.endpoint == 'patients.diagnosis_search' %}active{% endif %}"
+              href="{{ url_for('patients.diagnosis_search') }}">Search Diagnosis</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('patients.diagnosis_search') }}">Search Diagnosis</a>
-          </li>
-          <li class="nav-item">
-            <form id="shutdown-form" action="{{ url_for('shutdown') }}" method="POST" class="d-inline p-4">
-              <button class="btn btn-danger btn-sm" type="submit">Exit</button>
+          <li class="nav-item d-flex align-items-center">
+            <form id="shutdown-form" action="{{ url_for('shutdown') }}" method="POST" class="ms-3">
+              <button class="btn btn-sm btn-danger" type="submit">Exit</button>
             </form>
           </li>
         </ul>
@@ -46,22 +49,31 @@
     </div>
   </nav>
 
-  <main class="container mt-4">
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %}
-    <ul class="flash-messages">
-      {% for category, message in messages %}
+  <main class="container my-4 flex-grow-1">
+    <div class="bg-white p-4 rounded shadow-sm border">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div>
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{{ 'info' if category == 'message' else category }} alert-dismissible fade show flash-message"
+          role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
 
-      <li class="flash-message flash-{{ category|default('info') }}">
-        {{ message }}
-      </li>
-      {% endfor %}
-    </ul>
-    {% endif %} {% endwith %}
-    {% block content %} {% endblock %}
+      {% block content %}{% endblock %}
+    </div>
   </main>
 
-  <footer></footer>
+  <footer class="text-center text-muted py-3 bg-white shadow-sm mt-auto">
+    &copy; 2025 Patient Info App
+  </footer>
+
   <script>
     document.getElementById('shutdown-form').addEventListener('submit', function (e) {
       if (!confirm('Are you sure you want to exit?')) {

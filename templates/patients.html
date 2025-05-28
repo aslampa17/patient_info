@@ -53,17 +53,24 @@
       </tbody>
     </table>
   </div>
-  <div class="pagination">
+  <ul class="pagination">
+
     {% if pagination.has_prev %}
-    <a href="{{ url_for('patients.display_patients', page=pagination.prev_num, search=search_term) }}">&laquo; Prev</a>
+    <li class="page-item">
+      <a class="page-link"
+        href="{{ url_for('patients.display_patients', page=pagination.prev_num, search=search_term) }}">&laquo; Prev</a>
+    </li>
     {% endif %}
 
     Page {{ pagination.page }} of {{ pagination.pages }}
 
     {% if pagination.has_next %}
-    <a href="{{ url_for('patients.display_patients', page=pagination.next_num, search=search_term) }}">Next &raquo;</a>
+    <li class="page-item">
+      <a class="page-link"
+        href="{{ url_for('patients.display_patients', page=pagination.next_num, search=search_term) }}">Next &raquo;</a>
+    </li>
     {% endif %}
-  </div>
+  </ul>
 
 </div>
 <script>
