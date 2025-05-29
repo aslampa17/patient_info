@@ -26,7 +26,7 @@
     {{ form.hidden_tag() }}
 
     <div class="form-floating mb-3">
-      {{ form.symptoms(class="form-control", id="floatingSymptoms", placeholder="Enter symptoms") }}
+      {{ form.symptoms(class="form-control", id="floatingSymptoms", placeholder="Enter symptoms", style="height: 125px;") }}
       <label for="floatingSymptoms">{{ form.symptoms.label.text }}</label>
     </div>
     {% if form.symptoms.errors %}
@@ -38,7 +38,7 @@
     {% endif %}
 
     <div class="form-floating mb-3">
-      {{ form.diagnosis(class="form-control", id="diagnosis-input", placeholder="Enter diagnosis") }}
+      {{ form.diagnosis(class="form-control", id="diagnosis-input", placeholder="Enter diagnosis", style="height: 125px;") }}
       <label for="diagnosis-input">{{ form.diagnosis.label.text }}</label>
     </div>
     {% if form.diagnosis.errors %}
@@ -50,7 +50,7 @@
     {% endif %}
 
     <div class="form-floating mb-3">
-      {{ form.treatment(class="form-control", id="floatingTreatment", placeholder="Enter treatment") }}
+      {{ form.treatment(class="form-control", id="floatingTreatment", placeholder="Enter treatment", style="height: 125px;") }}
       <label for="floatingTreatment">{{ form.treatment.label.text }}</label>
     </div>
     {% if form.treatment.errors %}
@@ -62,7 +62,7 @@
     {% endif %}
 
     <div class="form-floating mb-3">
-      {{ form.notes(class="form-control", id="floatingNotes", placeholder="Enter notes") }}
+      {{ form.notes(class="form-control", id="floatingNotes", placeholder="Enter notes", style="height: 125px;") }}
       <label for="floatingNotes">{{ form.notes.label.text }}</label>
     </div>
     {% if form.notes.errors %}
