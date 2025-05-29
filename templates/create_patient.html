@@ -1,91 +1,93 @@
 {% extends 'layout.html' %} {% block content %}
 <div class="container pt-4">
-  <h2 class="text-center">
+  <h2 class="text-center mb-3">
     {% if patient %}Update Patient{% else %}Add New Patient{% endif %}
   </h2>
 
   <form
     action="{{ url_for('patients.update_patient', pid=patient.id) if patient else url_for('patients.new_patient') }}"
-    method="POST"
-  >
+    method="POST">
     {{ form.hidden_tag() }}
 
-    <div class="form-group">
-      {{ form.name.label }} <br />
-      {{ form.name(class="form-control") }} {% if form.name.errors %}
-      <ul class="text-danger">
-        {% for error in form.name.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
+
+    <div class="form-floating mb-3">
+      {{ form.name(class="form-control", id="floatingName", placeholder="Enter name") }}
+      <label for="floatingName">{{ form.name.label.text }}</label>
+    </div>
+    {% if form.name.errors %}
+    <ul class="text-danger">
+      {% for error in form.name.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="form-floating mb-3">
+      {{ form.age(class="form-control", id="floatingAge", placeholder="Enter age") }}
+      <label for="floatingAge">{{ form.age.label.text }}</label>
+    </div>
+    {% if form.age.errors %}
+    <ul class="text-danger">
+      {% for error in form.age.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="form-floating mb-3">
+      {{ form.gender(class="form-select", id="floatingGender", placeholder="Select gender") }}
+      <label for="floatingGender">{{ form.gender.label.text }}</label>
+    </div>
+    {% if form.gender.errors %}
+    <ul class="text-danger">
+      {% for error in form.gender.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="form-floating mb-3">
+      {{ form.email(class="form-control", id="floatingEmail", placeholder="name@example.com") }}
+      <label for="floatingEmail">{{ form.email.label.text }}</label>
+    </div>
+    {% if form.email.errors %}
+    <ul class="text-danger">
+      {% for error in form.email.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="form-floating mb-3">
+      {{ form.phone(class="form-control", id="floatingPhone", placeholder="Enter phone number") }}
+      <label for="floatingPhone">{{ form.phone.label.text }}</label>
+    </div>
+    {% if form.phone.errors %}
+    <ul class="text-danger">
+      {% for error in form.phone.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="form-floating mb-3">
+      {{ form.location(class="form-control", id="floatingLocation", placeholder="Enter location") }}
+      <label for="floatingLocation">{{ form.location.label.text }}</label>
+    </div>
+    {% if form.location.errors %}
+    <ul class="text-danger">
+      {% for error in form.location.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {{ form.submit(class="btn btn-primary mt-3", value="Update Patient" if patient else "Create Patient") }}
+
+    <div class="mt-3">
+      <a href="{{ url_for('patients.display_patients') }}" class="btn btn-secondary">Cancel</a>
     </div>
 
-    <div class="form-group">
-      {{ form.age.label }} <br />
-      {{ form.age(class="form-control") }} {% if form.age.errors %}
-      <ul class="text-danger">
-        {% for error in form.age.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
-
-    <div class="form-group">
-      {{ form.gender.label }} <br />
-      {{ form.gender(class="form-control") }} {% if form.gender.errors %}
-      <ul class="text-danger">
-        {% for error in form.gender.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
-
-    <div class="form-group">
-      {{ form.email.label }} <br />
-      {{ form.email(class="form-control") }} {% if form.email.errors %}
-      <ul class="text-danger">
-        {% for error in form.email.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
-
-    <div class="form-group">
-      {{ form.phone.label }} <br />
-      {{ form.phone(class="form-control") }} {% if form.phone.errors %}
-      <ul class="text-danger">
-        {% for error in form.phone.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
-
-    <div class="form-group">
-      {{ form.location.label }} <br />
-      {{ form.location(class="form-control") }} {% if form.location.errors %}
-      <ul class="text-danger">
-        {% for error in form.location.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
-
-    {{ form.submit(class="btn btn-primary", value="Update Patient" if patient
-    else "Create Patient") }}
-
-    <div class="mt-4">
-      <a
-        href="{{ url_for('patients.display_patients') }}"
-        class="btn btn-secondary"
-        >Cancel</a
-      >
-    </div>
   </form>
 </div>
 {% endblock %}
