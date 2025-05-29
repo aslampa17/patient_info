@@ -12,7 +12,7 @@ def display_patients():
     search_term = request.args.get('search')
 
     page = request.args.get('page', 1, type=int)
-    per_page = 5
+    per_page = 10
 
     statement = select(PatientInfo)
 
@@ -118,7 +118,7 @@ def display_visits(pid):
     patient = db.get_or_404(PatientInfo, pid)
 
     page = request.args.get('page', 1, type=int)
-    per_page = 5
+    per_page = 10
 
     statement = select(Visit).where(Visit.patient_id == pid).order_by(Visit.visit_date.desc())
     pagination = db.paginate(statement, page=page, per_page=per_page)
@@ -198,7 +198,7 @@ def diagnosis_search():
     search_term = request.args.get('search')
 
     page = request.args.get('page', 1, type=int)
-    per_page = 5
+    per_page = 10
 
     statement = select(Visit)
 
