@@ -55,7 +55,7 @@ def shutdown():
         os.kill(os.getpid(), signal.SIGTERM)
 
     threading.Thread(target=delayed_shutdown).start()
-    return "Shutting down.....", 200
+    return "<h1 style='text-align:center; background-color:lightgrey; color:white;'>Shutting down.....</h1>", 200
 
 
 def initialize_database():
