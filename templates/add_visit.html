@@ -1,4 +1,4 @@
-{% extends 'layout.html' %} 
+{% extends 'layout.html' %}
 {% block head_extra %}
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -25,60 +25,61 @@
     action="{{ url_for('patients.update_visit', pid=patient.id, vid=visit.id) if visit else url_for('patients.add_visit', pid=patient.id) }}">
     {{ form.hidden_tag() }}
 
-    <div class="form-group">
-      {{ form.symptoms.label }}<br />
-      {{ form.symptoms(class="form-control") }} {% if form.symptoms.errors %}
-      <ul class="text-danger">
-        {% for error in form.symptoms.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
+    <div class="form-floating mb-3">
+      {{ form.symptoms(class="form-control", id="floatingSymptoms", placeholder="Enter symptoms") }}
+      <label for="floatingSymptoms">{{ form.symptoms.label.text }}</label>
     </div>
+    {% if form.symptoms.errors %}
+    <ul class="text-danger">
+      {% for error in form.symptoms.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
 
-    <div class="form-group">
-      {{ form.diagnosis.label }}<br />
-      {{ form.diagnosis(class="form-control", id="diagnosis-input") }} {% if form.diagnosis.errors %}
-      <ul class="text-danger">
-        {% for error in form.diagnosis.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
+    <div class="form-floating mb-3">
+      {{ form.diagnosis(class="form-control", id="diagnosis-input", placeholder="Enter diagnosis") }}
+      <label for="diagnosis-input">{{ form.diagnosis.label.text }}</label>
     </div>
+    {% if form.diagnosis.errors %}
+    <ul class="text-danger">
+      {% for error in form.diagnosis.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
 
-    <div class="form-group">
-      {{ form.treatment.label }}<br />
-      {{ form.treatment(class="form-control") }} {% if form.treatment.errors %}
-      <ul class="text-danger">
-        {% for error in form.treatment.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
+    <div class="form-floating mb-3">
+      {{ form.treatment(class="form-control", id="floatingTreatment", placeholder="Enter treatment") }}
+      <label for="floatingTreatment">{{ form.treatment.label.text }}</label>
     </div>
+    {% if form.treatment.errors %}
+    <ul class="text-danger">
+      {% for error in form.treatment.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
 
-    <div class="form-group">
-      {{ form.notes.label }}<br />
-      {{ form.notes(class="form-control") }} {% if form.notes.errors %}
-      <ul class="text-danger">
-        {% for error in form.notes.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
+    <div class="form-floating mb-3">
+      {{ form.notes(class="form-control", id="floatingNotes", placeholder="Enter notes") }}
+      <label for="floatingNotes">{{ form.notes.label.text }}</label>
     </div>
+    {% if form.notes.errors %}
+    <ul class="text-danger">
+      {% for error in form.notes.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
 
-    <div class="form-group">
-      {{ form.submit(value="Update Visit" if visit else "Add Visit", class="btn
-      btn-primary") }}
-    </div>
-    <div class="mt-4">
-      <a href="{{ url_for('patients.display_visits', pid=patient.id) }}" class="btn btn-secondary">Cancel and View
-        Visits</a>
+    {{ form.submit(value="Update Visit" if visit else "Add Visit", class="btn
+    btn-primary mt-3") }}
+
+    <div class="mt-3">
+      <a href="{{ url_for('patients.display_visits', pid=patient.id) }}" class="btn btn-secondary">Cancel</a>
     </div>
   </form>
-
 </div>
 <script>
   $(function () {
