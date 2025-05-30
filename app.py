@@ -6,6 +6,7 @@ import time
 import webbrowser
 from flask import Flask, abort, jsonify, render_template, request
 from patients import patients_bp
+from reports import reports_bp
 from models import db
 from dotenv import load_dotenv
 
@@ -30,6 +31,7 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 
 db.init_app(app)
 app.register_blueprint(patients_bp)
+app.register_blueprint(reports_bp)
 
 
 @app.cli.command("init-db")
