@@ -250,4 +250,5 @@ def autocomplete_diagnosis():
                     temp.append(item)
         else:
             temp.append(result)
+    temp = list(set(temp))
     return jsonify(temp)
