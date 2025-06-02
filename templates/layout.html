@@ -39,6 +39,10 @@
             <a class="nav-link {% if request.endpoint == 'patients.diagnosis_search' %}active{% endif %}"
               href="{{ url_for('patients.diagnosis_search') }}">Search Diagnosis</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'patients.symptoms_search' %}active{% endif %}"
+              href="{{ url_for('patients.symptoms_search') }}">Search Symptoms</a>
+          </li>
           <li class="nav-item d-flex align-items-center">
             <form id="shutdown-form" action="{{ url_for('shutdown') }}" method="POST" class="ms-3">
               <button class="btn btn-sm btn-danger" type="submit">Exit</button>
