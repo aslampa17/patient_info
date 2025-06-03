@@ -26,8 +26,8 @@
     {{ form.hidden_tag() }}
 
     <div class="form-floating mb-3">
-      {{ form.symptoms(class="form-control", id="floatingSymptoms", placeholder="Enter symptoms", style="height: 125px;") }}
-      <label for="floatingSymptoms">{{ form.symptoms.label.text }}</label>
+      {{ form.symptoms(class="form-control", id="symptoms-input", placeholder="Enter symptoms", style="height: 125px;") }}
+      <label for="symptoms-input">{{ form.symptoms.label.text }}</label>
     </div>
     {% if form.symptoms.errors %}
     <ul class="text-danger">
@@ -99,6 +99,30 @@
       minLength: 2,
       source: function (request, response) {
         $.getJSON("{{ url_for('patients.autocomplete_diagnosis') }}", {
+          term: extractLast(request.term)
+        }, response);
+      },
+      focus: function () {
+        return false;
+      },
+      select: function (event, ui) {
+        var terms = split(this.value);
+        terms.pop();
+        terms.push(ui.item.value);
+        terms.push("");
+        this.value = terms.join(", ");
+        return false;
+      }
+    });
+
+    $("#symptoms-input").on("keydown", function (event) {
+      if (event.key === "Tab" && $(this).autocomplete("instance").menu.active) {
+        event.preventDefault();
+      }
+    }).autocomplete({
+      minLength: 2,
+      source: function (request, response) {
+        $.getJSON("{{ url_for('patients.autocomplete_symptoms') }}", {
           term: extractLast(request.term)
         }, response);
       },
