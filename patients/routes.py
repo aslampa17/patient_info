@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 from flask import jsonify, render_template, request, redirect, send_file, url_for, flash
 from sqlalchemy import and_, distinct, func, or_, select
@@ -156,12 +157,15 @@ def add_visit(pid):
     if form.validate_on_submit():
         try:
             new_visit = Visit(
+                visit_date = form.visit_date.data,
                 symptoms=form.symptoms.data,
                 diagnosis=form.diagnosis.data,
                 treatment=form.treatment.data,
                 notes=form.notes.data,
                 patient=patient,
             )
+            if isinstance(form.visit_date.data, str):
+                new_visit.visit_date = datetime.strptime(form.visit_date.data, "%Y-%m-%dT%H:%M")
             db.session.add(new_visit)
             db.session.commit()
             flash("Visit added successfully!", "success")
@@ -186,6 +190,8 @@ def update_visit(pid, vid):
     if form.validate_on_submit():
         try:
             form.populate_obj(visit)
+            if isinstance(form.visit_date.data, str):
+                visit.visit_date = datetime.strptime(form.visit_date.data, "%Y-%m-%dT%H:%M")
             db.session.commit()
             flash("Patient visit details updated successfully!", "success")
             return redirect(url_for("patients.display_visits", pid=pid))

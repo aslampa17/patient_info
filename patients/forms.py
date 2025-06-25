@@ -1,5 +1,6 @@
+from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, SubmitField, TextAreaField
+from wtforms import StringField, IntegerField, SelectField, SubmitField, TextAreaField, DateTimeLocalField
 from wtforms.validators import DataRequired, Length, NumberRange, Email
 
 class PatientForm(FlaskForm):
@@ -12,6 +13,7 @@ class PatientForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class VisitForm(FlaskForm):
+    visit_date = DateTimeLocalField('Visit Date', default=datetime.now, validators=[DataRequired()])
     symptoms = TextAreaField('Symptoms')
     diagnosis = TextAreaField('Diagnosis')
     treatment = TextAreaField('Treatment')

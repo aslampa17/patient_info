@@ -3,6 +3,8 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 {% endblock %}
 {% block content %}
@@ -26,7 +28,26 @@
     {{ form.hidden_tag() }}
 
     <div class="form-floating mb-3">
-      {{ form.symptoms(class="form-control", id="symptoms-input", placeholder="Enter symptoms", style="height: 125px;") }}
+      {{ form.visit_date(
+      class="form-control",
+      id="visitdate-input",
+      placeholder="Select visit date and time",
+      value=form.visit_date.data if form.visit_date.data else ''
+      ) }}
+      <label for="visitdate-input">{{ form.visit_date.label.text }}</label>
+    </div>
+
+    {% if form.visit_date.errors %}
+    <ul class="text-danger">
+      {% for error in form.visit_date.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="form-floating mb-3">
+      {{ form.symptoms(class="form-control", id="symptoms-input", placeholder="Enter symptoms", style="height: 125px;")
+      }}
       <label for="symptoms-input">{{ form.symptoms.label.text }}</label>
     </div>
     {% if form.symptoms.errors %}
@@ -38,7 +59,8 @@
     {% endif %}
 
     <div class="form-floating mb-3">
-      {{ form.diagnosis(class="form-control", id="diagnosis-input", placeholder="Enter diagnosis", style="height: 125px;") }}
+      {{ form.diagnosis(class="form-control", id="diagnosis-input", placeholder="Enter diagnosis", style="height:
+      125px;") }}
       <label for="diagnosis-input">{{ form.diagnosis.label.text }}</label>
     </div>
     {% if form.diagnosis.errors %}
@@ -50,7 +72,8 @@
     {% endif %}
 
     <div class="form-floating mb-3">
-      {{ form.treatment(class="form-control", id="floatingTreatment", placeholder="Enter treatment", style="height: 125px;") }}
+      {{ form.treatment(class="form-control", id="floatingTreatment", placeholder="Enter treatment", style="height:
+      125px;") }}
       <label for="floatingTreatment">{{ form.treatment.label.text }}</label>
     </div>
     {% if form.treatment.errors %}
@@ -140,5 +163,18 @@
     });
   });
 </script>
+<script>
+  flatpickr("#visitdate-input", {
+    enableTime: true,
+    dateFormat: "Y-m-d\\TH:i",
+    time_24hr: false,
+    altInput: true,
+    altFormat: "F j, Y h:i K",
+    defaultDate: "{{ form.visit_date.data if form.visit_date.data else '' }}"
+  });
+</script>
+
+
+
 
 {% endblock %}
