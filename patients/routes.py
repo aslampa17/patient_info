@@ -1,6 +1,5 @@
 from datetime import datetime
-import re
-from flask import jsonify, render_template, request, redirect, send_file, url_for, flash
+from flask import jsonify, render_template, request, redirect, url_for, flash
 from sqlalchemy import and_, distinct, func, or_, select
 from . import patients_bp
 from models import db, PatientInfo, Visit

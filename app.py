@@ -4,7 +4,7 @@ import sys
 import threading
 import time
 import webbrowser
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, render_template, request
 from patients import patients_bp
 from models import db
 from dotenv import load_dotenv
