@@ -19,7 +19,14 @@ def display_patients():
     if search_term:
         terms = [term.strip() for term in search_term.split(",") if term.strip()]
 
-        filters = [PatientInfo.phone.ilike(f"%{term}%") for term in terms]
+        filters = []
+        for term in terms:
+            filters.append(
+                or_(
+                    PatientInfo.phone.ilike(f"%{term}%"),
+                    PatientInfo.name.ilike(f"%{term}%")
+                )
+            )
         statement = statement.where(or_(*filters))
 
     statement = statement.order_by(PatientInfo.created_at.desc())
@@ -43,7 +50,7 @@ def autocomplete_patients():
         return jsonify([])
 
     query = (
-        select(PatientInfo.phone)
+        select(PatientInfo.name, PatientInfo.phone)
         .where(
             or_(
                 PatientInfo.name.ilike(f"%{term}%"),
@@ -53,7 +60,8 @@ def autocomplete_patients():
         .limit(10)
     )
 
-    results = db.session.execute(query).scalars().all()
+    results = db.session.execute(query).all()
+    results = [item for result in results for item in result]
     return jsonify(results)
 
 

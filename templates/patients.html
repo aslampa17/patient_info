@@ -11,7 +11,7 @@
   <h2 class="text-center">Patient List</h2>
   <form method="GET" action="{{ url_for('patients.display_patients') }}">
     <div class="input-group mb-3 mt-3">
-      <input type="text" id="patient-search" name="search" placeholder="Search by Phone"
+      <input type="text" id="patient-search" name="search" placeholder="Search by Name or Phone"
         value="{{ request.args.get('search', '') }}" class="form-control" />
       <button type="submit" class="btn btn-outline-primary">Search</button>
     </div>
