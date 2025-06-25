@@ -8,13 +8,13 @@
 {% block content %}
 <div class="container pt-4">
   <h2 class="text-center">Diagnosis List</h2>
-    <form method="GET" action="{{ url_for('patients.diagnosis_search') }}">
-      <div class="input-group mb-3 mt-3">
+  <form method="GET" action="{{ url_for('patients.diagnosis_search') }}">
+    <div class="input-group mb-3 mt-3">
       <input type="text" name="search" id="diagnosis-search" placeholder="Search by Diagnosis"
         value="{{ request.args.get('search', '') }}" class="form-control" />
       <button type="submit" class="btn btn-outline-primary">Search</button>
-      </div>
-    </form>
+    </div>
+  </form>
   <div class="table-responsive">
     <table class="table table-bordered">
       <thead>
@@ -78,19 +78,37 @@
 
 <script>
   $(function () {
-    $("#diagnosis-search").autocomplete({
+    function split(val) {
+      return val.split(/,\s*/);
+    }
+
+    function extractLast(term) {
+      return split(term).pop();
+    }
+
+    $("#diagnosis-search").on("keydown", function (event) {
+      if (event.key === "Tab" && $(this).autocomplete("instance").menu.active) {
+        event.preventDefault();
+      }
+    }).autocomplete({
+      minLength: 2,
       source: function (request, response) {
-        $.ajax({
-          url: "{{ url_for('patients.autocomplete_diagnosis') }}",
-          dataType: "json",
-          data: { term: request.term },
-          success: function (data) {
-            response(data);
-          }
-        });
+        $.getJSON("{{ url_for('patients.autocomplete_diagnosis') }}", {
+          term: extractLast(request.term)
+        }, response);
       },
-      minLength: 2
+      focus: function () {
+        return false;
+      },
+      select: function (event, ui) {
+        var terms = split(this.value);
+        terms.pop();
+        terms.push(ui.item.value);
+        terms.push("");
+        this.value = terms.join(", ");
+        return false;
+      }
     });
   });
-</script>
+</script
 {% endblock %}
