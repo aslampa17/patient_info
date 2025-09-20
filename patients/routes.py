@@ -57,7 +57,6 @@ def autocomplete_patients():
                 PatientInfo.phone.ilike(f"%{term}%"),
             )
         )
-        .limit(10)
     )
 
     results = db.session.execute(query).all()
@@ -284,7 +283,6 @@ def autocomplete_diagnosis():
     query = (
         select(distinct(Visit.diagnosis))
         .where(Visit.diagnosis.isnot(None), Visit.diagnosis.ilike(f"%{term}%"))
-        .limit(10)
     )
 
     results = db.session.execute(query).scalars().all()
@@ -354,7 +352,6 @@ def autocomplete_symptoms():
     query = (
         select(distinct(Visit.symptoms))
         .where(Visit.symptoms.isnot(None), Visit.symptoms.ilike(f"%{term}%"))
-        .limit(10)
     )
 
     results = db.session.execute(query).scalars().all()
